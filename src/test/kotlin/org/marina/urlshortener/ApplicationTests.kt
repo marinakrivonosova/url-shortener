@@ -1,4 +1,4 @@
-package tinyurl
+package org.marina.urlshortener
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

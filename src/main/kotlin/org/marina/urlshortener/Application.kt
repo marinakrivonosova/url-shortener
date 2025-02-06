@@ -1,4 +1,4 @@
-package tinyurl
+package org.marina.urlshortener
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,6 +7,5 @@ import org.springframework.boot.runApplication
 class Application
 
 fun main(args: Array<String>) {
-
     runApplication<Application>(*args)
 }
