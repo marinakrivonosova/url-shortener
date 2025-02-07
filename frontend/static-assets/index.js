@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Construct JSON payload
         const payload = { url: inputData };
 
-        const response = await fetch("http://localhost:8080/short-url", {
+        const response = await fetch("http://localhost:8087/short-url", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

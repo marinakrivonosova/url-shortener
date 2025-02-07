@@ -11,6 +11,7 @@ services:
     image: nginx
     volumes:
       - ./frontend:/usr/share/nginx/html
+      - ./nginx/app:/etc/nginx/conf.d
     ports:
       - "8087:80"
     environment:
