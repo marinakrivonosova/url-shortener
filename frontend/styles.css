@@ -1,0 +1,143 @@
+html, body {
+  width: 50%;
+  height: 50%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: whitesmoke;
+}
+
+.text-title {
+  color: black;
+  font-style: normal;
+  font-weight: bolder;
+  font-size: 2em;
+  text-align: center;
+  letter-spacing: 1px;
+  word-spacing:3px;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  font-family: "RM Neue",sans-serif;
+  margin: 0 auto;
+  text-align: center;
+  text-transform: none;
+}
+
+.input-url{
+  width: 100%;
+  padding: 12px;
+  border: 2px solid darkgrey;
+  border-radius: 10px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.button-request {
+  align-items: center;
+  appearance: button;
+  background-color: #0276FF;
+  border-radius: 8px;
+  border-style: none;
+  box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  font-family: "RM Neue",sans-serif;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0 auto;
+  padding: 10px 21px;
+  text-align: center;
+  text-transform: none;
+  transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-request:active {
+  background-color: #006AE8;
+}
+
+.button-request:hover {
+  background-color: #1C84FF;
+}
+
+#result-container {
+   text-align: center;
+   margin: 0 auto;
+   text-align: center;
+   text-transform: none;
+   display: none; /* Initially hidden */
+}
+
+
+#result-container p {
+    padding: 12px;
+    color: black;
+    font-style: normal;
+    font-weight: bolder;
+    font-size: 1em;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    font-family: "RM Neue",sans-serif;
+    margin: 0 auto;
+    text-align: center;
+    text-transform: none;
+}
+
+#result-container a {
+    color: #007BFF;
+    text-decoration: none;
+    font-style: normal;
+    font-weight: bolder;
+    font-size: 1em;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    font-family: "RM Neue",sans-serif;
+    margin: 0 auto;
+    text-align: center;
+    text-transform: none;
+}
+
+#result-container a:hover {
+    text-decoration: underline;
+}
+
+.copy-button {
+  align-items: center;
+  appearance: button;
+  background-color: gray;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  font-family: "RM Neue",sans-serif;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0 auto;
+  padding: 10px 21px;
+  text-align: center;
+  text-transform: none;
+  transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+  touch-action: manipulation;
+}
+
+.copy-button:active {
+  background-color: #006AE8;
+}
+
+.copy-button:hover {
+  background-color: #1C84FF;
+}
