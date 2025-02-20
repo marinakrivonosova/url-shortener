@@ -1,6 +1,6 @@
-# URL shortenrr
+# URL shortener
 
-The goal is to implement a simple url shortener.
+The goal is to implement a simple URL shortener.
 
 
 ## Requirements
@@ -21,7 +21,7 @@ docker compose up -d --build
 
 Web app will be available at http://localhost:8087/
 
-By running compose with `debug` profile mongo express will be available at http://localhost:8081 for db exploration.
+By running compose with `debug` profile Mongo Express will be available at http://localhost:8081 for db exploration.
 
 ```shell
 docker compose --profile debug up -d --build
