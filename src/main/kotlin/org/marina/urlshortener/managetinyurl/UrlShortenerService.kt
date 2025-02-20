@@ -3,6 +3,7 @@ package org.marina.urlshortener.managetinyurl
 import org.marina.urlshortener.errors.PathResolveError
 import org.marina.urlshortener.managetinyurl.dto.ShortUrl
 import org.marina.urlshortener.util.UrlShortenerUtil
+import org.marina.urlshortener.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -12,15 +13,18 @@ class UrlShortenerService(
     @Value("\${spring.application.url}") private val urlHead: String
 ) {
 
-    private val util = UrlShortenerUtil()
+    private val LOGGER = getLogger(UrlShortenerService::class.java)
 
+    private val util = UrlShortenerUtil()
 
     fun createShortUrl(longUrl: String): String {
         val shortUrlTail = generateAndEncode(longUrl)
+        LOGGER.info("Generated id $shortUrlTail for $longUrl")
         return buildReturn(shortUrlTail)
     }
 
     fun resolveShortUrl(url: String): String {
+        LOGGER.info("Resolving $urlHead$url...")
         return urlRepository
             .findById(url)
             .orElseThrow { PathResolveError("Path cannot be resolved") }

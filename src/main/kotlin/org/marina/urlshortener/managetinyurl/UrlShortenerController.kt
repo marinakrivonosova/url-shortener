@@ -25,6 +25,7 @@ class UrlShortenerController(val urlShortenerService: UrlShortenerService) {
             throw InvalidUrlError("Invalid URL: ${request.url}")
         }
         val shortURL = urlShortenerService.createShortUrl(request.url)
+        LOGGER.info("For the url ${request.url} short URL $shortURL was created")
         val response = CreateShortUrlResponse(shortURL)
         return ResponseEntity<Any>(response, HttpStatus.CREATED)
     }
@@ -32,6 +33,7 @@ class UrlShortenerController(val urlShortenerService: UrlShortenerService) {
     @GetMapping("/{url}")
     fun resolveTinyUrl(@PathVariable url: String, request: HttpServletRequest): ResponseEntity<out Any> {
         val resolved = urlShortenerService.resolveShortUrl(url)
+        LOGGER.info("Successfully mapped for id $url a long url $resolved")
         return ResponseEntity.status(HttpStatus.FOUND)
             .location(URI.create(resolved))
             .build()
