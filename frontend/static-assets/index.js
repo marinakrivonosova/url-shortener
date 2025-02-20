@@ -1,9 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const button = document.getElementById("long-url-form");
+    const form = document.getElementById("long-url-form");
 
-    button.addEventListener("submit", async (event) => { // Pass `event` parameter
-        event.preventDefault();
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault(); // Prevent default form submission
         const inputData = document.getElementById("url").value;
+        const resultContainer = document.getElementById("result-container");
+        const shortUrlParagraph = document.getElementById("short-url");
+
+        // Clear previous content
+        shortUrlParagraph.innerHTML = "";
+        resultContainer.style.display = "none";
+
+        if (!inputData.trim()) {
+            shortUrlParagraph.innerHTML = `<span style="color: red;">Please enter a valid URL.</span>`;
+            resultContainer.style.display = "block";
+            return;
+        }
 
         // Construct JSON payload
         const payload = { url: inputData };
@@ -13,41 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(payload)  // Send JSON payload
+            body: JSON.stringify(payload)
         });
 
-        const data = await response.json(); // Parse JSON response
-        console.log("Shortened URL:", data.shortUrl);
+        const resultData = await response.json();
 
-        // Display the shortened URL inside the result-container
-        const resultContainer = document.getElementById("result-container");
-        const shortUrlParagraph = document.getElementById("short-url");
+        if (!response.ok) {
+            shortUrlParagraph.innerHTML = `<span style="color: darkred;">Error ${resultData.message || response.statusText}</span>`;
+        } else {
+            shortUrlParagraph.innerHTML = `Shortened URL: <a href="${resultData.shortUrl}" target="_blank">${resultData.shortUrl}</a>`;
 
-        // Show the container
-        resultContainer.style.display = "block";
+            // Copy button functionality
+            let copyButton = document.querySelector(".copy-button");
+            if (!copyButton) {
+                copyButton = document.createElement("button");
+                copyButton.textContent = "Copy";
+                copyButton.classList.add("copy-button");
+                resultContainer.appendChild(copyButton);
+            }
 
-        // Set the shortened URL as a clickable link
-        shortUrlParagraph.innerHTML = `Shortened URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
-
-        // Log the link to the console to verify if it's correct
-        console.log("Link is correctly set to:", data.shortUrl);
-
-        if (!document.querySelector(".copy-button")) {
-            const copyButton = document.createElement("button");
-            copyButton.textContent = "Copy";
-            copyButton.classList.add("copy-button");
-            resultContainer.appendChild(copyButton);
-
-            // Add an event listener for the "Copy URL" button
-            copyButton.addEventListener("click", () => {
-                // Copy the shortened URL to the clipboard
-                navigator.clipboard.writeText(data.shortUrl).then(() => {
-                    copyButton.textContent = "Copied!"; // Change button text
+            copyButton.onclick = () => {
+                navigator.clipboard.writeText(resultData.shortUrl).then(() => {
+                    copyButton.textContent = "Copied!";
                     setTimeout(() => {
-                        copyButton.textContent = "Copy"; // Reset text after 2 seconds
+                        copyButton.textContent = "Copy";
                     }, 2000);
                 });
-            });
+            };
         }
+
+        // Show the result container
+        resultContainer.style.display = "block";
     });
 });
