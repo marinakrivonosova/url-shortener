@@ -6,8 +6,7 @@ import org.marina.urlshortener.errors.PathResolveError
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -37,10 +36,8 @@ internal class UrlShortenerServiceIntegrationTest {
     }
 
     companion object {
-        @Container
         @ServiceConnection
-        @JvmStatic
-        val mongo = MongoDBContainer("mongo:7.0").withExposedPorts(27017)
+        val postgres = PostgreSQLContainer("postgres:17.4")
     }
 
     @Test

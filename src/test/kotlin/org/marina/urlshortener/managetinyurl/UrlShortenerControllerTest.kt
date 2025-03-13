@@ -9,7 +9,7 @@ import org.mockito.Mockito.doAnswer
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 
-@SpringBootTest
+@WebMvcTest
 @AutoConfigureMockMvc
 internal class UrlShortenerControllerTest {
     @Autowired
@@ -28,6 +28,7 @@ internal class UrlShortenerControllerTest {
 
     @MockitoBean
     private lateinit var urlShortenerService: UrlShortenerService
+
 
     @Test
     fun `when called should return shortened url`() {
@@ -93,6 +94,43 @@ internal class UrlShortenerControllerTest {
             content {
                 contentType(MediaType.APPLICATION_JSON)
                 string("""{"message":"Path cannot be resolved"}""")
+            }
+        }
+    }
+
+    @Test
+    fun `when called with extra long param validation fails`() {
+        val longUrl =
+            "https://www.baeldung.com/java-spring-mockito-mock-mockbeanLorem-ipsum-dolor" +
+                    "-sit-ametLorem-ipsum-dolor-sit-amet-consetetur-sadipscing-elitr-sed-" +
+                    "diam-nonumy-eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-" +
+                    "erat-sed-diam-voluptua-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea" +
+                    "-rebum-Stet-clita-kasd-gubergren-no-sea-takimata-sanctus-est-Lorem-ipsum" +
+                    "-dolor-sit-amet-Lorem-ipsum-dolor-sit-amet-consetetur-sadipscing-elitr-sed" +
+                    "-diam-nonumy-eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-erat" +
+                    "-sed-diam-voluptua-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea-rebum-" +
+                    "Stet-clita-kasd-gubergren-no-sea-takimata-sanctus-est-Lorem-ipsum-dolor-sit-" +
+                    "amet-Lorem-ipsum-dolor-sit-amet-consetetur-sadipscing-elitr-sed-diam-nonumy-" +
+                    "eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-erat-sed-diam-" +
+                    "voluptua-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea-rebum-Stet-clita" +
+                    "-kasd-gubergren-no-sea-takimata-sanctus-est-Lorem-ipsum-dolor-sit-amet" +
+                    "-kasd-gubergren-no-sea-takimata-sanctus-est-Lorem-ipsum-akimata-sanctu" +
+                    "dolor-sit-amet"
+
+
+
+        Mockito.`when`(urlShortenerService.createShortUrl(longUrl)).thenReturn("super-short-url")
+
+        mockMvc.post("/short-url") {
+            content = mapper.writeValueAsString(CreateShortUrlRequest(longUrl))
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status {
+                isBadRequest()
+            }
+            content {
+                contentType(MediaType.APPLICATION_JSON)
+                string("""{"message":"Maximum length must be 1000 characters"}""")
             }
         }
     }

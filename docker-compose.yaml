@@ -5,42 +5,29 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - mongodb
+      - postgres
 
   frontend:
     image: nginx
     volumes:
-      - ./frontend:/usr/share/nginx/html
-      - ./nginx/app:/etc/nginx/conf.d
+      - './frontend:/usr/share/nginx/html'
+      - './nginx/app:/etc/nginx/conf.d'
     ports:
       - "8087:80"
     environment:
       - NGINX_PORT=80
 
-  mongodb:
-    image: 'mongo'
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
     ports:
-      - '27017:27017'
+      - '5432:5432'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo_admin
-      MONGO_INITDB_ROOT_PASSWORD: mongo_admin_pass
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
-      - 'mongo-volume:/data/db'
-
-
-  mongo-express:
-    image: 'mongo-express'
-    ports:
-      - '8081:8081'
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://mongo_admin:mongo_admin_pass@mongodb:27017/
-      # Credential to Mongo Express UI
-      ME_CONFIG_BASICAUTH_USERNAME: mongo_debug
-      ME_CONFIG_BASICAUTH_PASSWORD: qwerty
-    depends_on:
-      - mongodb
-    profiles:
-      - debug
+      - 'postgres-volume:/var/lib/postgresql'
 
   prometheus:
     image: prom/prometheus
@@ -68,6 +55,6 @@ services:
         - 'grafana-volume:/var/lib/grafana'
 
 volumes:
-  mongo-volume:
+  postgres-volume:
   grafana-volume:
   prometheus-volume:

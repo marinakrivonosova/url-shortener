@@ -2,12 +2,13 @@ package org.marina.urlshortener.managetinyurl
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.marina.urlshortener.managetinyurl.dto.ShortUrl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.junit.jupiter.Container
+import org.springframework.dao.InvalidDataAccessApiUsageException
+import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.AfterTest
 import kotlin.test.assertEquals
@@ -21,16 +22,16 @@ internal class UrlShortenerRepositoryTest {
     @Autowired
     private lateinit var repo: UrlShortenerRepository
 
-    val document1 = ShortUrl("short-url1", "very-long-url1")
-    val document2 = ShortUrl("short-url2", "www.ecccveery-long-url")
-    val document3 = ShortUrl("short-url3", "www.ecccveery-long-urdeddel")
+    val shortUrl1 = ShortUrl("short-url1", "very-long-url1")
+    val shortUrl2 = ShortUrl("short-url2", "www.ecccveery-long-url")
+    val shortUrl3 = ShortUrl("short-url3", "www.ecccveery-long-urdeddel")
 
     @BeforeEach
     fun clear() {
         repo.deleteAll()
-        repo.save(document1)
-        repo.save(document2)
-        repo.save(document3)
+        repo.save(shortUrl1)
+        repo.save(shortUrl2)
+        repo.save(shortUrl3)
     }
 
     @AfterTest
@@ -40,24 +41,22 @@ internal class UrlShortenerRepositoryTest {
     }
 
     companion object {
-        @Container
         @ServiceConnection
-        @JvmStatic
-        val mongo = MongoDBContainer("mongo:7.0").withExposedPorts(27017)
+        val postgres = PostgreSQLContainer("postgres:17.4")
     }
 
     @Test
     fun `when set up successful`() {
-        assertEquals(3, repo.findAll().size)
+        assertEquals(3, repo.findAll().count())
     }
 
     @Test
-    fun `when document is created and saved`() {
+    fun `when short url is created and saved`() {
         val document = ShortUrl("short-url4", "another-very-long-url")
         val savedDocument = repo.save(document)
 
         assertEquals(savedDocument, document)
-        assertEquals(4, repo.findAll().size)
+        assertEquals(4, repo.findAll().count())
         assertEquals(4, repo.count())
     }
 
@@ -68,5 +67,14 @@ internal class UrlShortenerRepositoryTest {
         repo.count()
     }
 
+    @Test
+    fun `when saving with not unique short url getting an error`() {
+        assertThrows<InvalidDataAccessApiUsageException> {
+            repo.insert(
+                shortUrl = "short-url1",
+                longUrl = "very-long-url-random"
+            )
+        }
+    }
 
 }
