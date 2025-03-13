@@ -1,13 +1,14 @@
 package org.marina.urlshortener.managetinyurl
 
 import org.marina.urlshortener.errors.PathResolveError
-import org.marina.urlshortener.managetinyurl.dto.ShortUrl
 import org.marina.urlshortener.util.UrlShortenerUtil
 import org.marina.urlshortener.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class UrlShortenerService(
     private val urlRepository: UrlShortenerRepository,
     @Value("\${spring.application.url}") private val urlHead: String
@@ -17,6 +18,7 @@ class UrlShortenerService(
 
     private val util = UrlShortenerUtil()
 
+    @Transactional
     fun createShortUrl(longUrl: String): String {
         val shortUrlTail = generateAndEncode(longUrl)
         LOGGER.info("Generated id $shortUrlTail for $longUrl")
@@ -25,18 +27,20 @@ class UrlShortenerService(
 
     fun resolveShortUrl(url: String): String {
         LOGGER.info("Resolving $urlHead$url...")
-        return urlRepository
-            .findById(url)
-            .orElseThrow { PathResolveError("Path cannot be resolved") }
-            .longUrl
+        val shortUrl = urlRepository
+            .findByShortUrl(url)
+
+        if (shortUrl == null) throw PathResolveError("Path cannot be resolved")
+        return shortUrl.longUrl
     }
 
     private fun generateAndEncode(longUrl: String): String {
         val count = urlRepository.count()
         val encodedUrl = util.encode(count + 1)
 
-        val saved = urlRepository.save(ShortUrl(shortUrl = encodedUrl, longUrl = longUrl))
-        return saved.shortUrl
+        urlRepository.insert(shortUrl = encodedUrl, longUrl = longUrl)
+
+        return encodedUrl
     }
 
     private fun buildReturn(urlTail: String) = urlHead + urlTail
